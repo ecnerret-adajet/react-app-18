@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import './ListGroup.css'
 
 // interface type anotation
 interface Props {
