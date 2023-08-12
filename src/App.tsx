@@ -41,11 +41,12 @@ function App() {
     const originalUsers = [...users];
     setUsers(users.filter((item) => item.id !== user.id));
 
-    axios.delete(`https://jsonplaceholder.typicode.com/users/${user.id}`)
-    .catch(err => {
-      setError(err.message)
-      setUsers(originalUsers);
-    });
+    axios
+      .delete(`https://jsonplaceholder.typicode.com/users/${user.id}`)
+      .catch((err) => {
+        setError(err.message);
+        setUsers(originalUsers);
+      });
   };
 
   const addUser = () => {
@@ -53,29 +54,54 @@ function App() {
     const newUser = { id: 100, name: "Terrence" };
     setUsers([newUser, ...users]);
 
-    axios.post(`https://jsonplaceholder.typicode.com/users`, newUser)
-    .then(({ data: savedUser }) => setUsers([savedUser, ...users]))
+    axios
+      .post(`https://jsonplaceholder.typicode.com/users`, newUser)
+      .then(({ data: savedUser }) => setUsers([savedUser, ...users]))
+      .catch((err) => {
+        setError(err.message);
+        setUsers(originalUsers);
+      });
+  };
+
+  const updateUser = (user: User) => {
+    const originalUsers = [...users];
+    const updatedUser = {...user, name: user.name + "!"};
+    setUsers(users.map(u => u.id === user.id ? updatedUser : u));
+
+    // put === replacing the object
+    // patch == replacing 1 or more of its properties
+
+    axios.patch(`https://jsonplaceholder.typicode.com/users/${user.id}`, updatedUser)
     .catch(err => {
       setError(err.message);
       setUsers(originalUsers);
     })
+
   }
 
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
       {loading && <div className="spinner-border"></div>}
-      <button className="btn btn-primary mb-3" onClick={addUser}>Add</button>
+      <button className="btn btn-primary mb-3" onClick={addUser}>
+        Add
+      </button>
       <ul className="list-group">
         {users?.map((user) => (
-          <li key={user.id} className="list-group-item d-flex justify-content-between">
-            {user.name} 
-            <button
-              className="btn btn-outline-danger"
-              onClick={() => deleteUser(user)}
-            >
-              Delete
-            </button>
+          <li
+            key={user.id}
+            className="list-group-item d-flex justify-content-between"
+          >
+            {user.name}
+            <div>
+              <button className="btn btn-secondary mx-2" onClick={() => updateUser(user)}>Update</button>
+              <button
+                className="btn btn-outline-danger"
+                onClick={() => deleteUser(user)}
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
