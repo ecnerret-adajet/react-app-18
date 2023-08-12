@@ -9,7 +9,7 @@ function App() {
 
   useEffect(() => {
     setLoading(true);
-    const { request, cancel } = userService.getAllUsers();
+    const { request, cancel } = userService.getAll<User>();
     request
       .then((res) => {
         setUsers(res.data);
@@ -32,7 +32,7 @@ function App() {
     const originalUsers = [...users];
     setUsers(users.filter((item) => item.id !== user.id));
 
-    userService.deleteUser(user.id).catch((err) => {
+    userService.delete(user.id).catch((err) => {
       setError(err.message);
       setUsers(originalUsers);
     });
@@ -43,7 +43,7 @@ function App() {
     const newUser = { id: 100, name: "Terrence" };
     setUsers([newUser, ...users]);
 
-    userService.addUser(newUser).then(({ data: savedUser }) => setUsers([savedUser, ...users]))
+    userService.create(newUser).then(({ data: savedUser }) => setUsers([savedUser, ...users]))
       .catch((err) => {
         setError(err.message);
         setUsers(originalUsers);
@@ -58,7 +58,7 @@ function App() {
     // put === replacing the object
     // patch == replacing 1 or more of its properties
  
-    userService.updateUser(updatedUser).catch((err) => {
+    userService.update(updatedUser).catch((err) => {
       setError(err.message);
       setUsers(originalUsers);
     });
